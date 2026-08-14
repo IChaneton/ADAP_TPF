@@ -66,6 +66,13 @@
       var audio = new Audio(src);
       audio.preload = "none";
       audio.loop = true;
+      audio.addEventListener("error", function () {
+        var code = audio.error ? audio.error.code : "?";
+        console.warn(
+          "[Los de la ventana] No se pudo cargar el audio '" + src + "' (código de error: " + code + "). " +
+          "Verificá que el archivo exista en esa ruta exacta (mayúsculas/minúsculas incluidas) y que sea un mp3 válido."
+        );
+      });
       audioCache[src] = audio;
     }
     return audioCache[src];
@@ -93,8 +100,8 @@
           /* el audio puede no estar listo todavía; se ignora */
         }
       }
-      audio.play().catch(function () {
-        /* reproducción bloqueada o archivo aún no disponible: se ignora */
+      audio.play().catch(function (err) {
+        console.warn("[Los de la ventana] No se pudo reproducir '" + audioSrc + "':", err.message || err);
       });
       currentAudio = audio;
       currentKey = audioSrc;
@@ -154,5 +161,148 @@
         /* localStorage no disponible: se ignora */
       }
     }
+  });
+})();
+
+// Reproductor de audio con forma de onda (sección 07 · Escuchar)
+// Genera las barras, controla play/pause y anima la forma de onda.
+// Si el navegador soporta Web Audio API, las barras reaccionan al audio
+// real; si no, o si el audio todavía no existe, cae en una animación
+// suave "idle" para que el reproductor nunca se vea roto.
+
+(function () {
+  var player = document.getElementById("audioPlayer");
+  var audio = document.getElementById("playerAudio");
+  if (!player || !audio) return;
+
+  var toggle = document.getElementById("playerToggle");
+  var iconPlay = toggle.querySelector(".icon-play");
+  var iconPause = toggle.querySelector(".icon-pause");
+  var waveform = document.getElementById("waveform");
+  var elCurrent = document.getElementById("playerCurrent");
+  var elDuration = document.getElementById("playerDuration");
+
+  var BAR_COUNT = 32;
+  var bars = [];
+  for (var i = 0; i < BAR_COUNT; i++) {
+    var bar = document.createElement("div");
+    bar.className = "bar";
+    bar.style.setProperty("--d", (i * 0.045).toFixed(3) + "s");
+    waveform.appendChild(bar);
+    bars.push(bar);
+  }
+
+  var audioCtx = null;
+  var analyser = null;
+  var freqData = null;
+  var rafId = null;
+
+  function formatTime(sec) {
+    if (!isFinite(sec) || sec < 0) sec = 0;
+    var m = Math.floor(sec / 60);
+    var s = Math.floor(sec % 60);
+    return m + ":" + (s < 10 ? "0" : "") + s;
+  }
+
+  function setPlayingIcon(isPlaying) {
+    iconPlay.style.display = isPlaying ? "none" : "";
+    iconPause.style.display = isPlaying ? "" : "none";
+    toggle.setAttribute("aria-label", isPlaying ? "Pausar" : "Reproducir");
+    player.classList.toggle("playing", isPlaying);
+  }
+
+  function ensureAudioGraph() {
+    if (audioCtx) return true;
+    try {
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return false;
+      audioCtx = new Ctx();
+      var source = audioCtx.createMediaElementSource(audio);
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 64; // 32 bins == BAR_COUNT
+      analyser.smoothingTimeConstant = 0.75;
+      source.connect(analyser);
+      analyser.connect(audioCtx.destination);
+      freqData = new Uint8Array(analyser.frequencyBinCount);
+      return true;
+    } catch (e) {
+      audioCtx = null;
+      analyser = null;
+      return false;
+    }
+  }
+
+  function drawFrame() {
+    analyser.getByteFrequencyData(freqData);
+    for (var i = 0; i < BAR_COUNT; i++) {
+      var v = freqData[i] || 0;
+      var pct = Math.max(8, (v / 255) * 100);
+      bars[i].style.height = pct + "%";
+    }
+    rafId = requestAnimationFrame(drawFrame);
+  }
+
+  function startVisualizer() {
+    waveform.classList.remove("idle");
+    if (audioCtx && audioCtx.state === "suspended") {
+      audioCtx.resume();
+    }
+    if (analyser) {
+      if (rafId) cancelAnimationFrame(rafId);
+      drawFrame();
+    }
+  }
+
+  function stopVisualizer() {
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    waveform.classList.add("idle");
+  }
+
+  toggle.addEventListener("click", function () {
+    if (audio.paused) {
+      ensureAudioGraph();
+      audio.play().catch(function (err) {
+        console.warn("[Los de la ventana] No se pudo reproducir '" + audio.src + "':", err.message || err);
+      });
+    } else {
+      audio.pause();
+    }
+  });
+
+  audio.addEventListener("error", function () {
+    var code = audio.error ? audio.error.code : "?";
+    console.warn(
+      "[Los de la ventana] No se pudo cargar '" + audio.getAttribute("src") + "' (código de error: " + code + "). " +
+      "Verificá que el archivo exista en esa ruta exacta (mayúsculas/minúsculas incluidas) y que sea un mp3 válido."
+    );
+  });
+
+  waveform.addEventListener("click", function (e) {
+    if (!isFinite(audio.duration) || audio.duration <= 0) return;
+    var rect = waveform.getBoundingClientRect();
+    var ratio = (e.clientX - rect.left) / rect.width;
+    audio.currentTime = Math.max(0, Math.min(1, ratio)) * audio.duration;
+  });
+
+  audio.addEventListener("play", function () {
+    setPlayingIcon(true);
+    startVisualizer();
+  });
+  audio.addEventListener("pause", function () {
+    setPlayingIcon(false);
+    stopVisualizer();
+  });
+  audio.addEventListener("ended", function () {
+    setPlayingIcon(false);
+    stopVisualizer();
+  });
+  audio.addEventListener("loadedmetadata", function () {
+    elDuration.textContent = formatTime(audio.duration);
+  });
+  audio.addEventListener("timeupdate", function () {
+    elCurrent.textContent = formatTime(audio.currentTime);
   });
 })();
