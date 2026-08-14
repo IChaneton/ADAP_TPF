@@ -163,6 +163,10 @@
 
   section p + p{ margin-top:-6px; }
 
+  .drop p:first-of-type{
+    text-indent: 0px;
+  }
+
   .drop p:first-of-type::first-letter{
     font-family:'Fraunces', serif;
     font-style:italic;
