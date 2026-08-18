@@ -1,16 +1,14 @@
 :root{
-    --bg:#221a17;
-    --bg-raised:#2c211c;
-    --ink:#f2e6d3;
-    --ink-dim:#c9b59b;
-    --ink-faint:#8f7a63;
-    --brass:#dc9a4c;
-    --brass-dim:#a5713a;
-    --rose:#c96b56;
-    --rose-dim:#8f4c3d;
-    --moss:#6b7a5e;
-    --rule:#42332b;
-    --glass: rgba(242,230,211,0.07);
+    --bg:#0b0b0a;
+    --bg-raised:#111110;
+    --ink:#ece5d6;
+    --ink-dim:#a49b88;
+    --ink-faint:#6b6558;
+    --brass:#c08a45;
+    --brass-dim:#8a6636;
+    --moss:#5f6e57;
+    --rule:#2a2823;
+    --glass: rgba(236,229,214,0.06);
     --maxw: 700px;
   }
 
@@ -20,13 +18,10 @@
   body{
     margin:0;
     background:
-      radial-gradient(ellipse 900px 560px at 50% -10%, rgba(220,154,76,0.16), transparent 62%),
-      radial-gradient(ellipse 760px 520px at 96% 8%, rgba(201,107,86,0.10), transparent 60%),
-      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/></svg>") repeat 0 0/180px 180px,
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(192,138,69,0.07), transparent 60%),
       var(--bg);
     color:var(--ink);
-    font-family:'Newsreader', Georgia, serif;
-    font-optical-sizing:auto;
+    font-family:'Source Serif 4', Georgia, serif;
     font-size:18px;
     line-height:1.7;
     -webkit-font-smoothing:antialiased;
@@ -70,7 +65,8 @@
   }
 
   h1.title{
-    font-family:'Instrument Serif', serif;
+    font-family:'Fraunces', serif;
+    font-optical-sizing:auto;
     font-weight:400;
     font-style:italic;
     font-size:clamp(42px, 8vw, 68px);
@@ -141,10 +137,9 @@
   section.no-rule{ border-top:none; }
 
   h2.head{
-    font-family:'Instrument Serif', serif;
-    font-weight:400;
-    font-style:italic;
-    font-size:clamp(28px, 4.2vw, 34px);
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:clamp(26px, 4vw, 32px);
     color:var(--ink);
     margin:0 0 17px 0;
     display:flex;
@@ -173,7 +168,7 @@
   }
 
   .drop p:first-of-type::first-letter{
-    font-family:'Instrument Serif', serif;
+    font-family:'Fraunces', serif;
     font-style:italic;
     font-size:3.6em;
     float:left;
@@ -183,7 +178,7 @@
   }
 
   .lede{
-    font-family:'Instrument Serif', serif;
+    font-family:'Fraunces', serif;
     font-style:italic;
     font-weight:400;
     font-size:22px;
@@ -198,8 +193,6 @@
     margin:26px 0 0 0;
     padding:0;
     border:1px solid var(--rule);
-    border-radius:3px;
-    overflow:hidden;
   }
   .rules li{
     padding:18px 20px;
@@ -265,8 +258,6 @@
     gap:2px;
     background:var(--rule);
     border:1px solid var(--rule);
-    border-radius:3px;
-    overflow:hidden;
   }
   .gallery .cell{
     background:var(--bg);
@@ -324,8 +315,6 @@
     overflow:hidden;
     background:var(--bg-raised);
     border:1px solid var(--rule);
-    border-radius:3px;
-    box-shadow:0 6px 18px rgba(0,0,0,0.25);
   }
   .interaction-map .imap-el img{
     display:block;
@@ -436,7 +425,6 @@
     max-height:88vh;
     background:var(--bg-raised);
     border:1px solid var(--rule);
-    border-radius:4px;
     padding:16px 16px 14px 16px;
     box-shadow:0 30px 90px rgba(0,0,0,0.65);
     transform:scale(0.96);
@@ -480,9 +468,7 @@
     margin-top:8px;
     padding:22px 26px;
     border:1px solid var(--rule);
-    border-radius:4px;
     background:var(--bg-raised);
-    box-shadow:0 10px 30px rgba(0,0,0,0.22);
   }
 
   .player-toggle{
@@ -522,7 +508,7 @@
     flex-wrap:wrap;
   }
   .player-title{
-    font-family:'Instrument Serif', serif;
+    font-family:'Fraunces', serif;
     font-style:italic;
     font-size:17px;
     color:var(--ink);
@@ -581,12 +567,12 @@
   blockquote{
     margin:28px 0;
     padding:4px 0 4px 22px;
-    border-left:2px solid var(--rose-dim);
-    font-family:'Instrument Serif', serif;
+    border-left:2px solid var(--brass-dim);
+    font-family:'Fraunces', serif;
     font-style:italic;
     font-size:17px;
     line-height:1.6;
-    color:#e6d4bd;
+    color:#d9cfba;
   }
   blockquote cite{
     display:block;
@@ -624,7 +610,7 @@
     text-align:center;
   }
   footer .mark{
-    font-family:'Instrument Serif', serif;
+    font-family:'Fraunces', serif;
     font-style:italic;
     color:var(--ink-faint);
     font-size:14px;
