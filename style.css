@@ -1,6 +1,6 @@
 :root{
-    --bg:#221a17;
-    --bg-raised:#2c211c;
+    --bg: #042116;
+    --bg-raised:#042116;
     --ink:#f2e6d3;
     --ink-dim:#c9b59b;
     --ink-faint:#8f7a63;
@@ -255,10 +255,10 @@
     color:var(--brass-dim);
     font-size: smaller;
     margin-left: 24px;
-    margin-bottom: 12px;
+    margin-bottom: 18px;
     text-align: justify;
     
-    line-height: 18px;
+    line-height: 20px;
   
   }
   .gallery{
