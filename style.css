@@ -166,6 +166,11 @@
     text-align: justify;
     text-indent: 36px;
   }
+  .nota-pie{
+    margin-top: 40px;
+    font-size: small;
+
+  }
   p:last-child{ margin-bottom:0; }
 
   section p + p{ margin-top:-6px; }
